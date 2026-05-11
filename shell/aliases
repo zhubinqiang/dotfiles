@@ -1,0 +1,27 @@
+# --- System Aliases ---
+alias ll="ls -alF"
+alias la="ls -A"
+alias l="ls -CF"
+
+# --- Dotfiles Management ---
+# Quickly jump to your dotfiles directory
+alias dots="cd ${HOME}/.dotfiles"
+alias rload='source ~/.bashrc'
+
+# --- Git Shortcuts ---
+alias gs="git status"
+alias ga="git add"
+alias gc="git commit"
+alias gp="git push"
+alias gl="git log --oneline --graph --all"
+
+# --- Network & Proxy Tools ---
+# Useful for checking your current public IP
+alias myip="curl -L ip.p3terx.com"
+
+# --- Docker Shortcuts ---
+alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias di="docker images"
+
+# --- alist ---
+alias open-alist='curl localhost:5244'

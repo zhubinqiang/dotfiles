@@ -1,0 +1,145 @@
+" --- VIM-PLUG CONFIGURATION ---
+" Location: ${HOME}/.vimrc
+
+" --- General Settings ---
+set nocompatible
+filetype plugin indent on
+
+" Automatically install vim-plug if not found
+if empty(glob('~/.vim/autoload/plug.vim'))
+  silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source ${MYVIMRC}
+endif
+
+call plug#begin('~/.vim/plugged')
+    " Surround.vim: Quoting/parenthesizing made simple
+    " Use 'cs' to change, 'ds' to delete, 'ys' to add surroundings
+    Plug 'tpope/vim-surround'
+    
+    " Gruvbox: Retro groove color scheme for Vim
+    Plug 'morhetz/gruvbox'
+    
+    " Airline: Lean & mean status/tabline for vim that's light as air
+    Plug 'vim-airline/vim-airline'
+    
+    " NERDTree: A tree explorer plugin for vim
+    Plug 'preservim/nerdtree'
+    
+    " Commentary: Comment stuff out with 'gcc' or 'gc'
+    Plug 'tpope/vim-commentary'
+
+
+    " Optional: Dev Tools (Only if a specific file exists)
+    " We check for a file named '.vim_dev_mode' in your HOME directory
+    if filereadable(expand("~/.vim_dev_mode"))
+        " CoC: Intelligent completion (needs Node.js)
+        Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    endif
+
+call plug#end()
+
+
+" --- General Settings ---
+let mapleader = ","     " Set leader key to COMMA
+set termguicolors       " Support 24-bit color
+set number              " Show line numbers
+"set relativenumber      " Show relative line numbers for easier jumping
+set history=1000        " Set history limit
+set encoding=utf-8      " Use UTF-8 encoding
+set mouse=a             " Full mouse support
+
+" --- Tab & Indent Settings ---
+set expandtab           " Use spaces instead of tabs
+set smarttab            " Insert blanks according to 'shiftwidth'
+set shiftwidth=4        " 1 tab = 4 spaces
+set tabstop=4
+
+" --- UI Settings ---
+syntax on               " Enable syntax highlighting
+set cursorline          " Highlight current line
+set showmatch           " Show matching brackets
+set background=dark     " Use dark mode
+colorscheme gruvbox     " Apply theme
+
+" --- Search Settings ---
+set hlsearch            " Highlight search results
+set incsearch           " Show results as you type
+set ignorecase          " Ignore case in search
+set smartcase           " Override 'ignorecase' if search contains uppercase
+
+" --- Keymaps Settings ---
+nnoremap <leader>w :w<CR>          " Save with ,w
+nnoremap <leader>q :q<CR>          " Quit with ,q
+nnoremap <leader>e :NERDTreeToggle<CR> " Toggle file tree with ,e
+nnoremap <leader>v :edit $MYVIMRC<CR>  " Open vimrc file quickly
+nnoremap <leader>nh :nohlsearch<CR>    " clear search highlighting
+"nnoremap <leader>nh :nohlsearch<CR>    " clear search highlighting
+
+" --- DEV-SPECIFIC CONFIG (Only if in Dev Mode)
+if filereadable(expand("~/.vim_dev_mode"))
+    " --- DYNAMIC NODE PATH ---
+    " Automatically find the active node path from nvm
+    if executable('node')
+        let g:coc_node_path = exepath('node')
+    endif
+
+    " --- COC EXTENSIONS ---
+    " Extensions to be installed on dev machines
+    let g:coc_global_extensions = [
+          \ 'coc-pyright', 
+          \ 'coc-sh', 
+          \ 'coc-clangd', 
+          \ 'coc-java', 
+          \ 'coc-json', 
+          \ 'coc-explorer',
+          \ 'coc-git'
+          \ ]
+
+    " --- KEYMAPS: COMPLETION ---
+    " Trigger completion with Tab
+    inoremap <silent><expr> <TAB>
+          \ coc#pum#visible() ? coc#pum#next(1) :
+          \ Check_back_space() ? "\<Tab>" :
+          \ coc#refresh()
+          
+    " Use Shift-Tab to go backwards in the menu
+    inoremap <expr><S-TAB> coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"
+
+    " Use Enter (CR) to confirm selection
+    inoremap <silent><expr> <CR> coc#pum#visible() ? coc#pum#confirm()
+                                  \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+    " --- KEYMAPS: DOCUMENTATION ---
+    " Show documentation with 'K'
+    nnoremap <silent> K :call ShowDocumentation()<CR>
+
+    " GoTo code navigation
+    nmap <silent> gd <Plug>(coc-definition)
+    nmap <silent> gy <Plug>(coc-type-definition)
+    nmap <silent> gi <Plug>(coc-implementation)
+    nmap <silent> gr <Plug>(coc-references)
+
+    " Symbol renaming
+    nmap <leader>rn <Plug>(coc-rename)
+
+    " Formatting selected code
+    xmap <leader>f  <Plug>(coc-format-selected)
+    nmap <leader>f  <Plug>(coc-format-selected)
+
+    function! ShowDocumentation()
+      if CocAction('hasProvider', 'hover')
+        call CocActionAsync('doHover')
+      else
+        call feedkeys('K', 'in')
+      endif
+    endfunction
+endif
+
+" --- HELPER FUNCTION ---
+" Check if there is a space before the cursor (used by Tab completion)
+function! Check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+

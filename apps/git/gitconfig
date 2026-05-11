@@ -1,0 +1,64 @@
+
+[user]
+	name = zhubinqiang
+	email = zhubinqiang@gmail.com
+[core]
+	excludesfile = ~/.gitignore_global
+	editor = vim
+	sshCommand = ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+
+[alias]
+	br = branch
+	b = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+	ba = branch -a
+	bl = blame
+	ci = commit -v -s
+	ca = commit --amend
+	rv = remote -v
+	co = checkout
+	cob = checkout -b
+	del = branch -D
+	st = status
+	s = status -s
+	d = diff
+	ds = diff --stat
+	dc = diff --cached
+	cf = config
+	mg = merge
+	f = fetch
+	fp = fetch -p
+	unstage = reset HEAD --
+	rh = reset --hard
+	root = rev-parse --show-toplevel
+	smu = submodule update --init --recursive
+	l = log --pretty=format:"%C(yellow)%h\\ %ad%Cred%d\\ %Creset%s%Cblue\\ [%cn]" --decorate --date=short
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
+	lgs = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --name-status
+	lgp = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative -p
+	lgd = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --name-status --diff-filter=D --summary
+	lgdc = log --graph --decorate --oneline --simplify-by-decoration
+	last = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative HEAD~10..
+	upstream-merge = !"git fetch origin -v; git fetch upstream -v; git merge upstream/master"
+	b = "!git for-each-ref --sort='-authordate' --format='%(authordate)%09%(objectname:short)%09%(refname)' refs/heads | sed -e 's-refs/heads/--'"
+	amc = am --continue
+	ams = am --skip
+	ama = am --abort
+	amr = am --resolved
+	amscp = am --show-current-patch
+	la = "!git config -l | grep alias | cut -c 7-"
+	pm = "!git push origin HEAD:refs/for/$(git symbolic-ref --short -q HEAD)"
+	ph = push origin HEAD
+[color]
+	ui = true
+	diff = auto
+	status = auto
+	branch = auto
+[pull]
+	# Prefer merging over rebasing during pull
+	rebase = false
+[push]
+	default = matching
+[credential]
+	helper = store
+[safe]
+	directory = *

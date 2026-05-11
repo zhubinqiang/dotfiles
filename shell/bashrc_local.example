@@ -1,0 +1,42 @@
+# --- LOCAL CONFIGURATION TEMPLATE ---
+# Instructions: 
+# 1. Copy this file to ${HOME}/.bashrc_local
+# 2. Uncomment and modify the lines according to the current machine
+# 3. This file is ignored by Git to protect your secrets
+
+# ====================================================================
+# 1. NETWORK & PROXY SETTINGS
+# ====================================================================
+# Common proxy ports: 7890 (Clash), 1080 (Shadowsocks), 10809 (v2ray)
+export MY_PROXY_URL="http://127.0.0.1:7890"
+export http_proxy="${MY_PROXY_URL}"
+export https_proxy="${MY_PROXY_URL}"
+export no_proxy="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8"
+
+# ====================================================================
+# 2. AI & DEVELOPMENT TOKENS
+# ====================================================================
+# GitHub Personal Access Token (for homebrew or gh-cli)
+# export GITHUB_TOKEN="ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+# Gemini API Key (for your VS Code Continue plugin or scripts)
+# export GEMINI_API_KEY="AIzaXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+
+# Ollama Host (if running on a different machine in your home lab)
+# export OLLAMA_HOST="192.168.31.xxx:11434"
+
+# ====================================================================
+# 3. MACHINE-SPECIFIC ENV VARIABLES
+# ====================================================================
+# Define if this machine has a high-DPI screen or specific hardware
+# export GDK_SCALE=2
+# export GDK_DPI_SCALE=0.5
+
+# ====================================================================
+# 4. CUSTOM PROMPT OVERRIDE
+# ====================================================================
+# Uncomment to give this specific machine a unique name in the terminal
+# export PS1_HOSTNAME_COLOR="\[\033[01;35m\]" # Magenta for Mac Mini
+
+
+
