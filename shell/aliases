@@ -1,11 +1,23 @@
-# --- System Aliases ---
-alias ll="ls -alF"
+# --- Common Overrides (Safety & Visuals) ---
+alias ls='ls --color=auto'
+alias ll='ls -lah'       # Detailed list: all files, human-readable size
 alias la="ls -A"
-alias l="ls -CF"
+alias l='ls -CF'         # Column-based list with type indicators
+alias rm='rm -i'         # Prompt before deletion
+alias cp='cp -i'         # Prompt before overwrite
+alias mv='mv -i'         # Prompt before move/rename
 
-# --- Dotfiles Management ---
-# Quickly jump to your dotfiles directory
-alias dots="cd ${HOME}/.dotfiles"
+# --- Navigation ---
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias -- -='cd -'         # Toggle between current and previous directory
+alias dot='cd ~/dotfiles' # Quick access to your dotfiles repo
+
+# --- Development Tools ---
+alias v='vim'
+alias nv='nvim'
+alias vi='nvim'          # Force the habit of using Neovim
 alias rload='source ~/.bashrc'
 
 # --- Git Shortcuts ---
@@ -14,14 +26,85 @@ alias ga="git add"
 alias gc="git commit"
 alias gp="git push"
 alias gl="git log --oneline --graph --all"
+alias gd='git diff'
+alias gpl='git pull'
+alias gco='git checkout'
 
 # --- Network & Proxy Tools ---
 # Useful for checking your current public IP
 alias myip="curl -L ip.p3terx.com"
+alias ports='netstat -tulanp'   # Check listening ports (Linux only)
+alias cls='clear'               # Standard clear command shortcut
+
 
 # --- Docker Shortcuts ---
-alias dps="docker ps --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'"
+alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'"
 alias di="docker images"
+alias dpsa="docker ps -a"
+alias drm="docker rm"
+alias drmi="docker rmi"
+alias docker-pid="docker inspect --format '{{.State.Pid}}'"
+alias docker-ip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
+
+function docker-enter() {
+    if ( docker exec -dt $1 /bin/bash &> /dev/null ); then
+        docker exec -it $1 /bin/bash
+    else
+        docker exec -it $1 sh
+    fi
+}
+
+function docker-image-history() {
+    docker history --no-trunc "$1" | sed 1d | tac | tr -s ' ' | sed 's/^.*#(nop) //' | sed 's,^.* /bin/sh -c ,RUN ,g' | awk '{$NF="";print}' | awk '{$NF="";print}' |  sed 's/\s$//' | sed 's,&& ,&\\\n    ,g'
+}
 
 # --- alist ---
 alias open-alist='curl localhost:5244'
+
+# --- Dev Mode Management ---
+# Quickly toggle your conditional config for Neovim/Vim
+alias devon='touch ~/.vim_dev_mode && echo "Dev Mode ACTIVATED"'
+alias devoff='rm -f ~/.vim_dev_mode && echo "Dev Mode DEACTIVATED"'
+
+# --- Functional Helpers ---
+# Extract almost any archive with a single command
+extract () {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjf $1     ;;
+            *.tar.gz)    tar xzf $1     ;;
+            *.bz2)       bunzip2 $1     ;;
+            *.rar)       unrar x $1     ;;
+            *.gz)        gunzip $1      ;;
+            *.tar)       tar xf $1      ;;
+            *.tbz2)      tar xjf $1     ;;
+            *.tgz)       tar xzf $1     ;;
+            *.zip)       unzip $1       ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1        ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# --- tmux ---
+alias tl='tmux ls'
+function ta() {
+    if [ "$#" -ge "1" ]; then
+        tmux -2 attach -t "$1"
+    else
+        tmux -2 attach
+    fi
+}
+
+function tad() {
+    if [ "$#" -ge "1" ]; then
+        tmux -2 attach -d -t "$1"
+    else
+        tmux -2 attach -d
+    fi
+}
+alias ts="tmux -2 new -s"
+

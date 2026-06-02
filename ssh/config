@@ -8,12 +8,12 @@ Host *
     ServerAliveInterval 60
     ServerAliveCountMax 3
 
-# --- GitHub Configuration ---
-Host github.com
-    HostName github.com
-    User git
-    # Point to your private key (usually not in dotfiles)
-    IdentityFile ${HOME}/.ssh/id_ed25519
+# # --- GitHub Configuration ---
+# Host github.com
+#     HostName github.com
+#     User git
+#     # Point to your private key (usually not in dotfiles)
+#     IdentityFile ${HOME}/.ssh/id_ed25519
 
 # --- Example: Mac Mini Server ---
 # Host mini

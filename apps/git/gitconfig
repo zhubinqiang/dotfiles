@@ -6,6 +6,7 @@
 	excludesfile = ~/.gitignore_global
 	editor = vim
 	sshCommand = ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no
+	longpaths = true
 
 [alias]
 	br = branch
@@ -62,3 +63,5 @@
 	helper = store
 [safe]
 	directory = *
+[http]
+	postBuffer = 524288000

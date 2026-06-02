@@ -12,7 +12,7 @@ REAL_REPO_PATH="${SOURCE_DIR}"
 # Logical entry point for the system
 DOT_DIR="${HOME}/.dotfiles"
 # Current date for backup suffix
-DATE_SUFFIX=$(date +%Y%m%d)
+DATE_SUFFIX=$(date +%Y%m%d-%H%M%S)
 
 # --- Pre-installation: Ensure the main symlink exists ---
 setup_repo_link() {
@@ -111,7 +111,7 @@ main() {
     # 4. check .bashrc_local
     check_local_config
 
-    # run_apt_setup
+    run_apt_setup
 
     check_dev_mode
 
