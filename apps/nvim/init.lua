@@ -83,7 +83,20 @@ require("lazy").setup({
 
   -- TOOL: Quick Commenting
   -- Use 'gcc' to comment a line or 'gc' in visual mode
-  { "tpope/vim-commentary" },
+  {
+      "tpope/vim-commentary",
+      config = function()
+          -- 关闭注释自动延续
+          vim.api.nvim_create_autocmd("FileType", {
+              pattern = { "sh", "bash", "zsh", "python", "lua", "*" },
+              callback = function()
+                  vim.opt_local.formatoptions:remove("r")
+                  vim.opt_local.formatoptions:remove("o")
+              end,
+          })
+      end,
+  },
+
 
   -- TOOL: Auto Pairs (Pure Lua)
   {
