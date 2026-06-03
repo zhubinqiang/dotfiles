@@ -104,6 +104,7 @@ main() {
     link_config "apps/npm/npmrc"       ".npmrc"
     link_config "ssh/config"           ".ssh/config"
     link_config "apps/nvim/init.lua"   ".config/nvim/init.lua"
+    link_config "apps/tmux/tmux.conf"   ".tmux.conf"
 
     # Note: If you have more lua files, you can link the whole directory:
     # link_config "apps/nvim/lua"        ".config/nvim/lua"
