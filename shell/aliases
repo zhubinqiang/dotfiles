@@ -3,6 +3,7 @@ alias ls='ls --color=auto'
 alias ll='ls -lah'       # Detailed list: all files, human-readable size
 alias la="ls -A"
 alias l='ls -CF'         # Column-based list with type indicators
+alias l1='ls -1'
 alias rm='rm -i'         # Prompt before deletion
 alias cp='cp -i'         # Prompt before overwrite
 alias mv='mv -i'         # Prompt before move/rename
@@ -12,7 +13,75 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias -- -='cd -'         # Toggle between current and previous directory
+alias .3='cd ../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
+alias .6='cd ../../../../../..'
+
 alias dot='cd ~/dotfiles' # Quick access to your dotfiles repo
+alias ws='cd ~/WS'
+alias shm='cd /dev/shm'
+alias tmp='cd /tmp'
+alias p='cd ~/Program'
+alias cdl='cd ~/Downloads'
+alias cdt='cd ~/Desktop'
+
+# --- file access ---
+function lss() {
+    find . -maxdepth 1 -type f -not -path '*/.git/*' -exec ls -lh {} + \
+    | awk '{size=$5; $1=$2=$3=$4=$5=$6=$7=$8=""; print size, $0}' \
+    | sort -hr
+}
+
+function scpid() {
+    local f="."
+    if [ "$#" -ne "0" ]; then
+        f="${1}"
+        if [ ! -e "${f}" ]; then
+            echo "${f} is not found"
+            return 128
+        fi
+    fi
+
+    if ( echo ${f} | grep -q ' ' ); then
+        local containSpace=true
+    fi
+
+    local rp="$(realpath "${f}")"
+    # local rp="$(dirname "${f}")/$(basename "${f}")"
+    rp="$(echo ${rp} | sed 's/ /\\ /g')"
+
+    if [ ${containSpace} ]; then
+        local h="$(whoami)@$(hostname):\"${rp}\""
+        echo "${h}"
+        for i in $(seq ${#h}); do
+            echo -n '*'
+        done
+        echo ""
+        for i in $(ip addr | grep -w 'inet' | grep -v '127.0.0.1' | sed -e 's/.*inet //' -e 's/\/.*$//g'); do
+            echo "$(whoami)@${i}:\"${rp}\""
+        done
+        for i in $(seq ${#h}); do
+            echo -n '*'
+        done
+    else
+        local h="$(whoami)@$(hostname):${rp}"
+        echo "${h}"
+        for i in $(seq ${#h}); do
+            echo -n '*'
+        done
+        echo ""
+        for i in $(ip addr | grep -w 'inet' | grep -v '127.0.0.1' | sed -e 's/.*inet //' -e 's/\/.*$//g'); do
+            echo "$(whoami)@${i}:${rp}"
+        done
+        for i in $(seq ${#h}); do
+            echo -n '*'
+        done
+    fi
+    echo ""
+    echo "${rp}"
+}
+
 
 # --- Development Tools ---
 alias v='vim'
@@ -30,15 +99,234 @@ alias gd='git diff'
 alias gpl='git pull'
 alias gco='git checkout'
 
+# alias ga='git add'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gco='git checkout'
+alias gclean='git clean -fdx'
+alias gcb='git checkout -b'
+
+alias gs='git status'
+alias gss='git status -s'
+
+alias gd='git diff'
+alias gdc='git diff --cached'
+
+alias gf='git fetch'
+alias gfp='git fetch -p'
+alias gfo='git fetch origin'
+
+alias gbl='git blame'
+function gfg() {
+   git ls-files | grep $@
+}
+
+alias gl='git pull'
+alias glg="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+alias glgs="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --name-status"
+alias glgp="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative -p"
+alias glgd="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative --name-status --diff-filter=D --summary"
+alias glgdc="git log --graph --decorate --oneline --simplify-by-decoration"
+alias glog='git log --oneline --decorate --graph'
+alias glast="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative HEAD~10.."
+
+alias gci='git commit -v -s'
+alias gca='git commit --amend'
+
+alias gsi='git submodule init'
+alias gsu='git submodule update'
+
+## refer to https://github.com/mdumitru/git-aliases
+alias gam='git am'
+alias gamc='git am --continue'
+alias gams='git am --skip'
+alias gama='git am --abort'
+alias gamr='git am --resolved'
+alias gamscp='git am --show-current-patch'
+
+alias git-debug='GIT_TRACE=1 GIT_TRANSFER_TRACE=1 GIT_CURL_VERBOSE=1 git'
+
+function git-init() {
+    local cwd=$(cd $(dirname .); pwd)
+    if [ $# -ne "0" ]; then
+        local d=$1
+        mkdir -p ${d}
+        cd ${d}
+    fi
+    git init .
+    chmod 755 -R .git/refs/
+    chmod 755 -R .git/objects/
+    git config receive.denyCurrentBranch ignore
+
+    cd ${cwd}
+}
+
+function help-git() {
+    cat<< EOF
+git rev-parse HEAD
+git rev-parse --short HEAD
+git rev-parse --show-toplevel
+git describe --tags
+git symbolic-ref HEAD --short
+
+git log --all --full-history -- /path/to/file
+git log --diff-filter=D --summary
+git checkout COMMIT^1 -- /path/to/file
+git --git-dir=%s --work-tree=%s
+git show commitID:path_to_file
+
+~: top --> bottom
+^: left --> right
+HEAD~~~ <==> HEAD^^^ <==> HEAD~3
+git diff HEAD^^ HEAD main.c
+git diff HEAD^^..HEAD -- main.c
+git diff HEAD~2 HEAD -- main.c
+git diff <commitID_1>:<file_1> <commitID_2>:<file_2>
+
+git cherry-pick A..B   # commit (A, B]
+git cherry-pick A^..B  # commit [A, B]
+
+git clone -b <branchname> --single-branch <remote-repo-url>
+git clone --depth 1 <remote-repo-url>
+git clone --recursive <remote-repo-url>
+git submodule update --init --recursive
+
+git ls-remote --head <remote-repo-url> <branchname>
+
+git push -u origin --all
+git push -u origin --tags
+git push origin --delete remote_branch
+
+git am xxx.patch
+git am --show-current-patch
+git apply --reject xxx.patch
+vim -O a.c.rej a.c
+git add a.c
+git am --resolved
+
+git grep -n "UnicodeDecodeError" \$(git rev-list --all)
+
+git fetch origin pull/1234/head:pr
+git chckout pr
+EOF
+}
+
+
 # --- Network & Proxy Tools ---
+alias proxyon="export http_proxy=http://127.0.0.1:7890; export https_proxy=http://127.0.0.1:7890; export all_proxy=socks5://127.0.0.1:7890; echo 'Terminal Proxy: ON'"
+alias proxyoff="unset http_proxy https_proxy all_proxy; echo 'Terminal Proxy: OFF'"
+alias proxystatus="curl -I https://google.com"
+
 # Useful for checking your current public IP
-alias myip="curl -L ip.p3terx.com"
+# alias myip="curl -L ip.p3terx.com"
+function myip() {
+    ip addr | grep -w 'inet' | grep -v '127.0.0.1' | sed -e 's/.*inet //' -e 's/\/.*$//g'
+}
+# Get public IP address quickly via multiple fallbacks
+alias pubip="curl -s https://api.ipify.org || curl -s https://ifconfig.me ; echo"
+
 alias ports='netstat -tulanp'   # Check listening ports (Linux only)
 alias cls='clear'               # Standard clear command shortcut
+alias wget='wget -c --no-check-certificate'
+alias wget-all='wget --no-check-certificate -c -r -np -k -L -p -nc'
+# alias wget-all='wget --no-check-certificate -c -r -np -nd -k -L -p -nc'
+
+function proxy-show() {
+    cat<<EOF
+export http_proxy=http://127.0.0.1:7890
+export https_proxy=http://127.0.0.1:7890
+export no_proxy="127.0.0.1,localhost"
+EOF
+}
+
+function help-ssh() {
+cat<<EOF
+## local:A
+ssh -L A:1111:C:3333 userB@B
+
+## local:B
+ssh -R A:1111:C:3333 userA@A
+
+# ssh -D *:5555 -N media@localhost
+ssh -D 10.67.116.25:5555 -N media@media-kc.sh.intel.com
+ssh -o ProxyCommand="ncat --proxy-type socks4 --proxy 10.67.116.25:5555 %h %p" media@192.168.100.208
+ssh -o ProxyCommand="nc -X 5 -x 10.67.116.25:5555  %h %p" media@192.168.100.208
+EOF
+}
+
+alias sock5="ssh -D *:5555 -q -C -N ${USER}@${HOSTNAME}"
+
+# alias www='python -m SimpleHTTPServer 8888'
+function www() {
+    local port=$1
+    if [ -z ${port} ]; then
+        port=8888
+    fi
+    if ( type python3 &> /dev/null ); then
+        python3 -m http.server ${port}
+    else
+        python -m SimpleHTTPServer ${port}
+    fi
+}
+
+function help-nmcli() {
+cat << EOF
+nmcli device disconnect eth1
+nmcli device connect eth1
+
+nmcli connection add \
+type ethernet \
+con-name enp0s31f6 \
+ifname eth1
+
+nmcli connection modify enp0s31f6 \
+autoconnect yes \
+ipv4.method manual \
+ipv4.addresses 10.67.112.123/23 \
+ipv4.dns "10.248.2.5 10.239.27.228 172.17.6.9" \
+ipv4.gateway 10.67.112.1
+
+nmcli connection down enp0s31f6
+nmcli connection up enp0s31f6
+EOF
+}
+
+function help-ip() {
+cat << EOF
+ip link set dev eth0 up/down
+ip link set dev eth0 address 00:01:4f:00:15:f1
+
+ip link add name br0 type bridge
+ip link set br0 up
+
+ip link add veth-0 type veth peer name veth-1
+ip link set veth-0 up
+ip link set veth-1 up
+ip netns add tsj
+ip link set veth-1 netns tsj
+ip netns exec tsj ip link set veth-1 name eth0
+ip netns exec tsj ip link set eth0 up
+ip netns exec tsj ip addr add 192.168.1.1/24 dev eth0
+ip link delete veth-0
+ip netns delete tsj
+
+ip addr add 192.168.100.123/24 dev eth0
+ip addr del 192.168.100.123/24 dev br0
+ip addr flush dev eth0
+
+ip route add default via 10.67.116.1
+ip route del default
+ip route add default via 10.67.116.1 dev eth0
+ip route del 10.67.116.1
+ip route add 10.67.116.0/24 via 10.67.116.1 dev eth0 src 10.67.116.51
+
+ip neigh list
+EOF
+}
 
 
 # --- Docker Shortcuts ---
-alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Status}}\t{{.Ports}}'"
+alias dps="docker ps --format 'table {{.Names}}\t{{.Image}}\t{{.Ports}}'"
 alias di="docker images"
 alias dpsa="docker ps -a"
 alias drm="docker rm"
@@ -107,4 +395,86 @@ function tad() {
     fi
 }
 alias ts="tmux -2 new -s"
+
+
+# --------------------------------------------------------------------
+# 11. Custom Tool Cheat Sheets (Xray, Acme.sh, Ollama)
+# --------------------------------------------------------------------
+
+# Xray与网络代理运维速查
+help-xray() {
+    cat << 'EOF'
+=========================================================
+ ⚡ Xray & Proxy Diagnostic Cheat Sheet
+=========================================================
+[ Systemd 服务管理 ]
+sudo systemctl status xray     # 检查 Xray 运行状态
+sudo systemctl restart xray    # 重启 Xray 服务
+sudo journalctl -u xray -f     # 实时查看 Xray 运行日志 (按 Ctrl+C 退出)
+
+[ Tailscale 组网 ]
+sudo tailscale up --accept-routes  # 启动并接受子网路由
+tailscale status                   # 查看当前 Mesh 网络节点状态
+tailscale ping <hostname>          # 测试节点连通性
+
+[ Reality 协议排查 ]
+# 检查本机 443 端口是否被正常监听
+sudo lsof -i :443 | grep LISTEN
+=========================================================
+EOF
+}
+
+# SSL 证书管理 (acme.sh DNS 模式) 速查
+help-acme() {
+    cat << 'EOF'
+=========================================================
+ 🔐 Acme.sh SSL Certificate Cheat Sheet (DNS Mode)
+=========================================================
+[ 常用环境变量 ]
+# export DP_Id="你的ID"
+# export DP_Key="你的Key"
+
+[ 证书签发与管理 ]
+# 首次申请 (以 DNSPod 为例)
+acme.sh --issue --dns dns_dp -d example.com -d *.example.com
+
+# 强制手动续签 (当自动续签失败时使用)
+acme.sh --renew -d example.com --force
+
+# 安装证书到 Nginx/Xray 目录
+acme.sh --install-cert -d example.com \
+--key-file       /etc/xray/xray.key  \
+--fullchain-file /etc/xray/xray.crt \
+--reloadcmd     "systemctl restart xray"
+
+[ 升级与排错 ]
+acme.sh --upgrade --auto-upgrade   # 开启自动更新
+acme.sh --list                     # 查看当前管理的证书列表
+=========================================================
+EOF
+}
+
+# Ollama 本地 AI 模型速查
+help-ollama() {
+    cat << 'EOF'
+=========================================================
+ 🦙 Ollama Local AI Cheat Sheet
+=========================================================
+[ 基础操作 ]
+ollama run llama3.2      # 运行或下载模型并进入交互模式
+ollama list              # 查看已安装的本地模型列表
+ollama rm llama3.2       # 删除指定模型以释放磁盘空间
+ollama pull llama3.2     # 仅拉取更新模型，不运行
+
+[ API 调试 ]
+# 测试本地 API 是否正常响应 (配合 Continue 插件排错时使用)
+curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2",
+  "prompt": "Why is the sky blue?",
+  "stream": false
+}'
+=========================================================
+EOF
+}
+
 

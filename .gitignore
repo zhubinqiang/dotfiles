@@ -48,3 +48,7 @@ desktop.ini
 # 虽然通常忽略 .env，但如果你有示例模版，可以手动取消忽略
 # !.env.example
 
+## nvim, doesn't need to track this file
+/bin/nvim-linux-x86_64.tar.gz
+
+
