@@ -9,6 +9,19 @@ HISTCONTROL=ignoredups
 # Append to the history file, don't overwrite it
 shopt -s histappend
 
+# Cross-Distribution Bash Completion Detection
+if ! shopt -oq posix; then
+    # Ubuntu / Debian
+    if [ -f /usr/share/bash-completion/bash_completion ]; then
+        . /usr/share/bash-completion/bash_completion
+    elif [ -f /etc/bash_completion ]; then
+        . /etc/bash_completion
+    # CentOS / RHEL
+    elif [ -f /etc/profile.d/bash_completion.sh ]; then
+        . /etc/profile.d/bash_completion.sh
+    fi
+fi
+
 # --- Load Common Aliases ---
 if [ -f "${HOME}/.aliases" ]; then
     . "${HOME}/.aliases"
@@ -25,7 +38,8 @@ export EDITOR="vim"
 export LANG="en_US.UTF-8"
 
 # --- Custom Prompt (Optional) ---
-PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+# PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 # --- NVM (Node Version Manager) ---
 export NVM_DIR="$HOME/.nvm"

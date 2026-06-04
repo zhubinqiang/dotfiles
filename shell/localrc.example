@@ -25,6 +25,10 @@
 # Ollama Host (if running on a different machine in your home lab)
 # export OLLAMA_HOST="192.168.31.xxx:11434"
 
+# DNSPod
+# export DP_Id="your_dns_id"
+# export DP_Key="your_dns_key"
+
 # ====================================================================
 # 3. MACHINE-SPECIFIC ENV VARIABLES
 # ====================================================================
@@ -38,5 +42,9 @@
 # Uncomment to give this specific machine a unique name in the terminal
 # export PS1_HOSTNAME_COLOR="\[\033[01;35m\]" # Magenta for Mac Mini
 
+# ====================================================================
+# 5. Company specific configurations or local paths
+# ====================================================================
+# export PATH="/custom/local/path/bin:$PATH"
 
 
