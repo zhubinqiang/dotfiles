@@ -8,10 +8,10 @@
 # 1. NETWORK & PROXY SETTINGS
 # ====================================================================
 # Common proxy ports: 7890 (Clash), 1080 (Shadowsocks), 10809 (v2ray)
-export MY_PROXY_URL="http://127.0.0.1:7890"
-export http_proxy="${MY_PROXY_URL}"
-export https_proxy="${MY_PROXY_URL}"
-export no_proxy="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8"
+# export MY_PROXY_URL="http://127.0.0.1:7890"
+# export http_proxy="${MY_PROXY_URL}"
+# export https_proxy="${MY_PROXY_URL}"
+# export no_proxy="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8"
 
 # ====================================================================
 # 2. AI & DEVELOPMENT TOKENS
