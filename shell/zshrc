@@ -1,0 +1,62 @@
+# ====================================================================
+#  Zsh Core Configuration (The Hub)
+# ====================================================================
+
+# --------------------------------------------------------------------
+# 1. 基础环境变量 (Environment Variables)
+# --------------------------------------------------------------------
+export LANG="en_US.UTF-8"
+export LC_ALL="en_US.UTF-8"
+export EDITOR="nvim"
+export VISUAL="nvim"
+
+# --------------------------------------------------------------------
+# 2. Homebrew 智能初始化 (Apple Silicon & Intel 兼容)
+# --------------------------------------------------------------------
+# 动态探测并加载 Homebrew 环境，避免在不同芯片的 Mac 上报错
+if [[ -x /opt/homebrew/bin/brew ]]; then
+    # Apple Silicon (M1/M2/M3...)
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x /usr/local/bin/brew ]]; then
+    # Intel Mac
+    eval "$(/usr/local/bin/brew shellenv)"
+fi
+
+# --------------------------------------------------------------------
+# 3. Zsh 历史记录优化 (History Tuning)
+# --------------------------------------------------------------------
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt EXTENDED_HISTORY          # 记录命令的时间戳
+setopt SHARE_HISTORY             # 在所有开着的终端窗口间实时共享历史记录
+setopt HIST_IGNORE_DUPS          # 忽略连续的重复命令
+setopt HIST_IGNORE_SPACE         # 以空格开头的命令不计入历史 (非常适合输入密码或敏感 API Key 时使用)
+
+# --------------------------------------------------------------------
+# 4. NVM (Node Version Manager) 初始化
+# --------------------------------------------------------------------
+# 确保 coc.nvim 等重度依赖 Node 的工具能准确找到环境
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+# --------------------------------------------------------------------
+# 5. Zsh 自动补全 (Auto Completion)
+# --------------------------------------------------------------------
+autoload -Uz compinit
+compinit -u # 忽略不安全的目录权限警告
+
+# --------------------------------------------------------------------
+# 6. 挂载我们自己打造的武器库 (Aliases & Functions)
+# --------------------------------------------------------------------
+# 探测 aliases.sh 是否存在，存在则加载
+if [ -f "$HOME/.dotfiles/shell/aliases" ]; then
+    source "$HOME/.dotfiles/shell/aliases"
+fi
+
+# 如果有私密的本地配置 (比如公司内网环境变量)，放在 ~/.zshrc.local 中
+if [ -f "$HOME/.localrc" ]; then
+    source "$HOME/.localrc"
+fi
+

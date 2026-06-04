@@ -55,12 +55,12 @@ link_config() {
 }
 
 check_local_config() {
-    local local_file="${HOME}/.bashrc_local"
-    local example_file="${DOT_DIR}/shell/bashrc_local.example"
+    local local_file="${HOME}/.localrc"
+    local example_file="${DOT_DIR}/shell/localrc.example"
 
     if [ ! -f "${local_file}" ]; then
         echo "--------------------------------------------------------"
-        echo "Notice: ~/.bashrc_local does not exist."
+        echo "Notice: ~/.localrc does not exist."
         echo "Found template at: ${example_file}"
         echo "You may want to copy it: cp ${example_file} ${local_file}"
         echo "--------------------------------------------------------"
@@ -110,7 +110,7 @@ main() {
     # Note: If you have more lua files, you can link the whole directory:
     # link_config "apps/nvim/lua"        ".config/nvim/lua"
 
-    # 4. check .bashrc_local
+    # 4. check .localrc
     check_local_config
 
     run_apt_setup

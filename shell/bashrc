@@ -16,8 +16,8 @@ fi
 
 # --- Load Local Secrets (Not in Git) ---
 # Use this for private tokens or machine-specific exports
-if [ -f "${HOME}/.bashrc_local" ]; then
-    . "${HOME}/.bashrc_local"
+if [ -f "${HOME}/.localrc" ]; then
+    . "${HOME}/.localrc"
 fi
 
 # --- Set Default Editor ---
