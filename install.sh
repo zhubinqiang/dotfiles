@@ -101,6 +101,7 @@ main() {
     # 3. Application configurations
     link_config "apps/vim/vimrc"       ".vimrc"
     link_config "apps/git/gitconfig"   ".gitconfig"
+    link_config "apps/git/gitignore_global"   ".gitignore_global"
     link_config "apps/npm/npmrc"       ".npmrc"
     link_config "ssh/config"           ".ssh/config"
     link_config "apps/nvim/init.lua"   ".config/nvim/init.lua"
