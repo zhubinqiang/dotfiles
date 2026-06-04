@@ -14,6 +14,12 @@ DOT_DIR="${HOME}/.dotfiles"
 # Current date for backup suffix
 DATE_SUFFIX=$(date +%Y%m%d-%H%M%S)
 
+# Color
+Red='\e[0;31m'
+Gre='\e[0;32m'
+Yel='\e[0;33m'
+RCol='\e[0m'
+
 # --- Pre-installation: Ensure the main symlink exists ---
 setup_repo_link() {
     echo "--- Checking repository symlink ---"
@@ -40,17 +46,17 @@ link_config() {
         # If it is a real file (not a symlink), rename it for backup
         if [ -f "${dest_file}" ] && [ ! -L "${dest_file}" ]; then
             local backup_name="${dest_file}_${DATE_SUFFIX}"
-            echo "Backing up real file: ${dest_file} -> ${backup_name}"
+            echo -e "${Gre}[INFO]${RCol} Backing up real file: ${dest_file} -> ${backup_name}"
             mv "${dest_file}" "${backup_name}"
         else
             # If it is already a symlink, just remove it to update
-            echo "Removing existing symlink: ${dest_file}"
+            echo -e "${Gre}[INFO]${RCol} Removing existing symlink: ${dest_file}"
             rm "${dest_file}"
         fi
     fi
 
     # Create the new symlink
-    echo "Linking: ${dest_file} -> ${src_file}"
+    echo -e "${Gre}[INFO]${RCol} Linking: ${dest_file} -> ${src_file}"
     ln -s "${src_file}" "${dest_file}"
 }
 
@@ -60,7 +66,8 @@ check_local_config() {
 
     if [ ! -f "${local_file}" ]; then
         echo "--------------------------------------------------------"
-        echo "Notice: ~/.localrc does not exist."
+        echo -e "${Yel}Notice:${RCol} ~/.localrc does not exist."
+        # echo "Notice: ~/.localrc does not exist."
         echo "Found template at: ${example_file}"
         echo "You may want to copy it: cp ${example_file} ${local_file}"
         echo "--------------------------------------------------------"
@@ -80,9 +87,9 @@ run_apt_setup() {
 
 check_dev_mode() {
     if [ -f "${HOME}/.vim_dev_mode" ]; then
-        echo "Development mode detected. Ensure you have run setup/dev_node.sh"
+        echo -e "${Gre}Info:${RCol} Development mode detected. Ensure you have run setup/dev_node.sh"
     else
-        echo "Basic mode (Docker/Minimal) initialized."
+        echo -e "${Gre}Info:${RCol} Basic mode (Docker/Minimal) initialized."
     fi
 }
 

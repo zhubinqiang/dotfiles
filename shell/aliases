@@ -4,9 +4,23 @@ alias ll='ls -lah'       # Detailed list: all files, human-readable size
 alias la="ls -A"
 alias l='ls -CF'         # Column-based list with type indicators
 alias l1='ls -1'
-alias rm='rm -i'         # Prompt before deletion
-alias cp='cp -i'         # Prompt before overwrite
-alias mv='mv -i'         # Prompt before move/rename
+alias rm='rm -I --preserve-root'
+
+
+# --- font color ---
+## echo -e "${Blu}blue ${Red}red ${RCol}etc...."
+RCol='\e[0m'    # Text Reset
+
+# Regular           Bold                Underline           High Intensity      BoldHigh Intens     Background          High Intensity Backgrounds
+Bla='\e[0;30m';     BBla='\e[1;30m';    UBla='\e[4;30m';    IBla='\e[0;90m';    BIBla='\e[1;90m';   On_Bla='\e[40m';    On_IBla='\e[0;100m';
+Red='\e[0;31m';     BRed='\e[1;31m';    URed='\e[4;31m';    IRed='\e[0;91m';    BIRed='\e[1;91m';   On_Red='\e[41m';    On_IRed='\e[0;101m';
+Gre='\e[0;32m';     BGre='\e[1;32m';    UGre='\e[4;32m';    IGre='\e[0;92m';    BIGre='\e[1;92m';   On_Gre='\e[42m';    On_IGre='\e[0;102m';
+Yel='\e[0;33m';     BYel='\e[1;33m';    UYel='\e[4;33m';    IYel='\e[0;93m';    BIYel='\e[1;93m';   On_Yel='\e[43m';    On_IYel='\e[0;103m';
+Blu='\e[0;34m';     BBlu='\e[1;34m';    UBlu='\e[4;34m';    IBlu='\e[0;94m';    BIBlu='\e[1;94m';   On_Blu='\e[44m';    On_IBlu='\e[0;104m';
+Pur='\e[0;35m';     BPur='\e[1;35m';    UPur='\e[4;35m';    IPur='\e[0;95m';    BIPur='\e[1;95m';   On_Pur='\e[45m';    On_IPur='\e[0;105m';
+Cya='\e[0;36m';     BCya='\e[1;36m';    UCya='\e[4;36m';    ICya='\e[0;96m';    BICya='\e[1;96m';   On_Cya='\e[46m';    On_ICya='\e[0;106m';
+Whi='\e[0;37m';     BWhi='\e[1;37m';    UWhi='\e[4;37m';    IWhi='\e[0;97m';    BIWhi='\e[1;97m';   On_Whi='\e[47m';    On_IWhi='\e[0;107m';
+
 
 # --- Navigation ---
 alias ..='cd ..'
@@ -27,13 +41,19 @@ alias cdl='cd ~/Downloads'
 alias cdt='cd ~/Desktop'
 
 # --- file access ---
-function lss() {
-    find . -maxdepth 1 -type f -not -path '*/.git/*' -exec ls -lh {} + \
+alias rsync-copy="rsync -avz --progress -h"
+alias rsync-move="rsync -avz --progress -h --remove-source-files"
+alias rsync-update="rsync -avzu --progress -h"
+alias rsync-synchronize="rsync -avzu --delete --progress -h"
+
+find-max-file() {
+    # find . -maxdepth 1 -type f -not -path '*/.git/*' -exec ls -lh {} + \
+    find . -type f -exec ls -lh {} + \
     | awk '{size=$5; $1=$2=$3=$4=$5=$6=$7=$8=""; print size, $0}' \
     | sort -hr
 }
 
-function scpid() {
+scpid() {
     local f="."
     if [ "$#" -ne "0" ]; then
         f="${1}"
@@ -117,7 +137,7 @@ alias gfp='git fetch -p'
 alias gfo='git fetch origin'
 
 alias gbl='git blame'
-function gfg() {
+gfg() {
    git ls-files | grep $@
 }
 
@@ -146,7 +166,7 @@ alias gamscp='git am --show-current-patch'
 
 alias git-debug='GIT_TRACE=1 GIT_TRANSFER_TRACE=1 GIT_CURL_VERBOSE=1 git'
 
-function git-init() {
+git-init() {
     local cwd=$(cd $(dirname .); pwd)
     if [ $# -ne "0" ]; then
         local d=$1
@@ -161,7 +181,7 @@ function git-init() {
     cd ${cwd}
 }
 
-function help-git() {
+help-git() {
     cat<< EOF
 git rev-parse HEAD
 git rev-parse --short HEAD
@@ -213,13 +233,8 @@ EOF
 
 
 # --- Network & Proxy Tools ---
-alias proxyon="export http_proxy=http://127.0.0.1:7890; export https_proxy=http://127.0.0.1:7890; export all_proxy=socks5://127.0.0.1:7890; echo 'Terminal Proxy: ON'"
-alias proxyoff="unset http_proxy https_proxy all_proxy; echo 'Terminal Proxy: OFF'"
-alias proxystatus="curl -I https://google.com"
-
-# Useful for checking your current public IP
 # alias myip="curl -L ip.p3terx.com"
-function myip() {
+myip() {
     ip addr | grep -w 'inet' | grep -v '127.0.0.1' | sed -e 's/.*inet //' -e 's/\/.*$//g'
 }
 # Get public IP address quickly via multiple fallbacks
@@ -231,7 +246,7 @@ alias wget='wget -c --no-check-certificate'
 alias wget-all='wget --no-check-certificate -c -r -np -k -L -p -nc'
 # alias wget-all='wget --no-check-certificate -c -r -np -nd -k -L -p -nc'
 
-function proxy-show() {
+proxy-show() {
     cat<<EOF
 export http_proxy=http://127.0.0.1:7890
 export https_proxy=http://127.0.0.1:7890
@@ -239,7 +254,7 @@ export no_proxy="127.0.0.1,localhost"
 EOF
 }
 
-function help-ssh() {
+help-ssh() {
 cat<<EOF
 ## local:A
 ssh -L A:1111:C:3333 userB@B
@@ -257,7 +272,7 @@ EOF
 alias sock5="ssh -D *:5555 -q -C -N ${USER}@${HOSTNAME}"
 
 # alias www='python -m SimpleHTTPServer 8888'
-function www() {
+www() {
     local port=$1
     if [ -z ${port} ]; then
         port=8888
@@ -269,7 +284,7 @@ function www() {
     fi
 }
 
-function help-nmcli() {
+help-nmcli() {
 cat << EOF
 nmcli device disconnect eth1
 nmcli device connect eth1
@@ -291,7 +306,7 @@ nmcli connection up enp0s31f6
 EOF
 }
 
-function help-ip() {
+help-ip() {
 cat << EOF
 ip link set dev eth0 up/down
 ip link set dev eth0 address 00:01:4f:00:15:f1
@@ -334,7 +349,7 @@ alias drmi="docker rmi"
 alias docker-pid="docker inspect --format '{{.State.Pid}}'"
 alias docker-ip="docker inspect --format '{{ .NetworkSettings.IPAddress }}'"
 
-function docker-enter() {
+docker-enter() {
     if ( docker exec -dt $1 /bin/bash &> /dev/null ); then
         docker exec -it $1 /bin/bash
     else
@@ -342,7 +357,7 @@ function docker-enter() {
     fi
 }
 
-function docker-image-history() {
+docker-image-history() {
     docker history --no-trunc "$1" | sed 1d | tac | tr -s ' ' | sed 's/^.*#(nop) //' | sed 's,^.* /bin/sh -c ,RUN ,g' | awk '{$NF="";print}' | awk '{$NF="";print}' |  sed 's/\s$//' | sed 's,&& ,&\\\n    ,g'
 }
 
@@ -379,7 +394,7 @@ extract () {
 
 # --- tmux ---
 alias tl='tmux ls'
-function ta() {
+ta() {
     if [ "$#" -ge "1" ]; then
         tmux -2 attach -t "$1"
     else
@@ -387,7 +402,7 @@ function ta() {
     fi
 }
 
-function tad() {
+tad() {
     if [ "$#" -ge "1" ]; then
         tmux -2 attach -d -t "$1"
     else
@@ -397,8 +412,95 @@ function tad() {
 alias ts="tmux -2 new -s"
 
 
+# --- mount ---
+help-mount() {
+    cat<< EOF
+## umount
+sudo fuser -mv /mnt
+
+mount --bind /test1 /test2
+mount -t cifs //example.com/share /mnt/ -o user=USER,passwd=PASSWD
+
+## yum install -y ntfs-3g
+## apt install -y exfat-util
+mount /dev/sdc /mnt
+
+## mount loop
+losetup /dev/loop0 VirtualMachineImage.raw
+kpartx -a /dev/loop0
+kpartx -l /dev/loop0
+mount /dev/mapper/loop0p1 /mnt
+
+## umount loop
+unmount /mnt
+kpartx -d /dev/loop0
+losetup -d /dev/loop
+
+## virtual file system
+mount -t proc none /mnt
+mount -t tmpfs -o size=64m none /mnt
+
+## samba
+smbclient //example.com/share -U USER%PASSWD
+
+## apt install -y sshfs
+sshfs user@example.com:/home/user/WS /mnt/
+sudo sshfs -o rw,default_permissions,allow_other,uid=1000,gid=1000 user@example.com:/dev/shm /mnt
+
+## workdir needs to be an empty directory
+# /upper
+# /lower1
+# /lower2
+# /lower3
+mount -t overlay overlay -o lowerdir=/lower1:/lower2:/lower3,upperdir=/upper,workdir=/work /merged
+EOF
+}
+
+
+help-lvm() {
+cat << EOF
+## Physical Volume
+pvcreate /dev/sdb1
+pvdisplay
+pvremove /dev/sdb1
+
+## Volume Group
+vgcreate volume-group1 /dev/sdb1 /dev/sdb2
+vgdisplay
+vgextend volume-group1 /dev/sdb3
+vgremove volume-group1
+
+pvs
+vgs -v
+vgrename PzOElX-4jRk-JCL4-8dJx-t7c0-7xOl-oeyjwM centos-xxx
+pvs
+
+## Logical Volume
+lvcreate -L 100M -n lv1 volume-group1
+lvdisplay
+lvscan
+lvresize -l +884 /dev/volume-group1/lv
+
+resize2fs /dev/volume-group1/lv1
+
+e2fsck /dev/volume-group1/lv1
+e2fsck -f /dev/volume-group1/lv1
+
+## format
+mkfs.ext4 /dev/volume-group1/lv1
+mount /dev/volume-group1/lv1 /mnt/
+
+## mount
+lvdisplay
+lvchange -ay /dev/centos/home
+mount /dev/centos/home /mnt
+EOF
+}
+
+
+
 # --------------------------------------------------------------------
-# 11. Custom Tool Cheat Sheets (Xray, Acme.sh, Ollama)
+# Custom Tool Cheat Sheets (Xray, Acme.sh, Ollama)
 # --------------------------------------------------------------------
 
 # Xray与网络代理运维速查
