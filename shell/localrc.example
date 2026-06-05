@@ -8,19 +8,27 @@
 # 1. NETWORK & PROXY SETTINGS
 # ====================================================================
 # Common proxy ports: 7890 (Clash), 1080 (Shadowsocks), 10809 (v2ray)
-export MY_PROXY_URL="http://127.0.0.1:7890"
-export http_proxy="${MY_PROXY_URL}"
-export https_proxy="${MY_PROXY_URL}"
+# export MY_PROXY_URL="host.docker.internal:7890" ## this is for macos
+export MY_PROXY_URL="127.0.0.1:7890"
+export http_proxy="http://${MY_PROXY_URL}"
+export https_proxy="http://${MY_PROXY_URL}"
 export no_proxy="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8"
 
-alias proxyon="export http_proxy=http://127.0.0.1:7890; export https_proxy=http://127.0.0.1:7890; export all_proxy=socks5://127.0.0.1:7890; echo 'Terminal Proxy: ON'"
+# alias proxyon="export http_proxy=http://${MY_PROXY_URL}; export https_proxy=http://${MY_PROXY_URL}; export all_proxy=socks5://${MY_PROXY_URL}; echo 'Terminal Proxy: ON'"
+proxyon() {
+    export http_proxy=http://${MY_PROXY_URL}
+    export https_proxy=http://${MY_PROXY_URL}
+    export all_proxy=socks5://${MY_PROXY_URL}
+    echo 'Terminal Proxy: ON'
+}
+
 alias proxyoff="unset http_proxy https_proxy all_proxy; echo 'Terminal Proxy: OFF'"
 alias proxystatus="curl -I https://google.com"
 
 help-proxy() {
     cat<<EOF
-export http_proxy=http://127.0.0.1:7890
-export https_proxy=http://127.0.0.1:7890
+export http_proxy=http://${MY_PROXY_URL}
+export https_proxy=http://${MY_PROXY_URL}
 export no_proxy="localhost,127.0.0.1,192.168.0.0/16,10.0.0.0/8"
 EOF
 }
@@ -63,10 +71,10 @@ EOF
 # ====================================================================
 # Homebrew Aliyun Mirror
 # ====================================================================
-export HOMEBREW_API_DOMAIN="https://mirrors.aliyun.com/homebrew/homebrew-bottles/api"
-export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.aliyun.com/homebrew/homebrew-bottles"
-export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/brew.git"
-export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/homebrew-core.git"
+# export HOMEBREW_API_DOMAIN="https://mirrors.aliyun.com/homebrew/homebrew-bottles/api"
+# export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.aliyun.com/homebrew/homebrew-bottles"
+# export HOMEBREW_BREW_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/brew.git"
+# export HOMEBREW_CORE_GIT_REMOTE="https://mirrors.aliyun.com/homebrew/homebrew-core.git"
 
 # export HOMEBREW_API_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles/api"
 # export HOMEBREW_BOTTLE_DOMAIN="https://mirrors.tuna.tsinghua.edu.cn/homebrew-bottles"
