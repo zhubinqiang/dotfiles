@@ -20,6 +20,14 @@ Gre='\e[0;32m'
 Yel='\e[0;33m'
 RCol='\e[0m'
 
+# ====================================================================
+# Semantic Logging Functions
+# ====================================================================
+msg_info()    { printf "\033[1;34m[INFO]\033[0m %s\n" "$*"; }    # blue   Bold
+msg_success() { printf "\033[1;32m[ OK ]\033[0m %s\n" "$*"; }    # green  Bold
+msg_warn()    { printf "\033[1;33m[WARN]\033[0m %s\n" "$*"; }    # yellow Bold
+msg_error()   { printf "\033[1;31m[FAIL]\033[0m %s\n" "$*"; }    # red    Bold
+
 # --- Pre-installation: Ensure the main symlink exists ---
 setup_repo_link() {
     echo "--- Checking repository symlink ---"
@@ -46,17 +54,17 @@ link_config() {
         # If it is a real file (not a symlink), rename it for backup
         if [ -f "${dest_file}" ] && [ ! -L "${dest_file}" ]; then
             local backup_name="${dest_file}_${DATE_SUFFIX}"
-            echo -e "${Gre}[INFO]${RCol} Backing up real file: ${dest_file} -> ${backup_name}"
+            msg_info "Backing up real file: ${dest_file} -> ${backup_name}"
             mv "${dest_file}" "${backup_name}"
         else
             # If it is already a symlink, just remove it to update
-            echo -e "${Gre}[INFO]${RCol} Removing existing symlink: ${dest_file}"
+            msg_info "Removing existing symlink: ${dest_file}"
             rm "${dest_file}"
         fi
     fi
 
     # Create the new symlink
-    echo -e "${Gre}[INFO]${RCol} Linking: ${dest_file} -> ${src_file}"
+    msg_info "Linking: ${dest_file} -> ${src_file}"
     ln -s "${src_file}" "${dest_file}"
 }
 
@@ -66,7 +74,7 @@ check_local_config() {
 
     if [ ! -f "${local_file}" ]; then
         echo "--------------------------------------------------------"
-        echo -e "${Yel}Notice:${RCol} ~/.localrc does not exist."
+        msg_warn "~/.localrc does not exist."
         # echo "Notice: ~/.localrc does not exist."
         echo "Found template at: ${example_file}"
         echo "You may want to copy it: cp ${example_file} ${local_file}"
@@ -79,7 +87,7 @@ run_apt_setup() {
     if [ -f "/etc/os-release" ]; then
         # Check if OS is Ubuntu
         if grep -q "Ubuntu" /etc/os-release; then
-            echo "Ubuntu detected, running APT optimization..."
+            msg_info "Ubuntu detected, running APT optimization..."
             bash "${DOT_DIR}/setup/apt.sh"
         fi
     fi
@@ -87,9 +95,9 @@ run_apt_setup() {
 
 check_dev_mode() {
     if [ -f "${HOME}/.vim_dev_mode" ]; then
-        echo -e "${Gre}Info:${RCol} Development mode detected. Ensure you have run setup/dev_node.sh"
+        msg_info "Development mode detected. Ensure you have run setup/dev_node.sh"
     else
-        echo -e "${Gre}Info:${RCol} Basic mode (Docker/Minimal) initialized."
+        msg_info "Basic mode (Docker/Minimal) initialized."
     fi
 }
 
