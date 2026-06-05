@@ -18,6 +18,19 @@ vim.opt.expandtab = true
 vim.opt.mouse = "a"
 vim.opt.termguicolors = true
 
+
+-- Use Neovim's modern built-in OSC 52 autocommand
+-- This automatically copies any yanked text (including mouse selections) to your Mac clipboard
+vim.api.nvim_create_autocmd('TextYankPost', {
+  desc = 'Sync yanked text to Mac clipboard via OSC 52',
+  callback = function()
+    if vim.v.event.operator == 'y' then
+      require('vim.ui.clipboard.osc52').copy('+')(vim.v.event.regcontents)
+    end
+  end,
+})
+
+
 -- ==========================================================================
 -- 3. BOOTSTRAP LAZY.NVIM
 -- ==========================================================================

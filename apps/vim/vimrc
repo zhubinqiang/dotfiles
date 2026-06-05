@@ -49,6 +49,33 @@ set history=1000        " Set history limit
 set encoding=utf-8      " Use UTF-8 encoding
 set mouse=a             " Full mouse support
 
+" Define the OSC 52 copy function for classic Vim
+function! Osc52Yank()
+    " Get the contents of the default register
+    let l:text = getreg('"')
+    " Encode the text into base64
+    let l:b64 = system('base64', l:text)
+    " Strip any trailing newlines from base64 command output
+    let l:b64 = substitute(l:b64, '\n', '', 'g')
+
+    " Construct the OSC 52 escape sequence for standard terminals
+    let l:osc52 = "\e]52;c;" . l:b64 . "\x07"
+
+    " If inside a Tmux session, wrap the sequence so Tmux passes it through
+    if exists('$TMUX')
+        let l:osc52 = "\ePtmux;\e" . substitute(l:osc52, "\e", "\e\e", 'g') . "\e\\"
+    endif
+
+    " Send the sequence directly to the terminal emulator (iTerm2)
+    call writefile([l:osc52], '/dev/tty', 'b')
+endfunction
+
+" Automatically trigger OSC 52 yank after text is selected and yanked
+augroup VimOsc52
+    autocmd!
+    autocmd TextYankPost * if v:event.operator == 'y' | call Osc52Yank() | endif
+augroup END
+
 " --- Tab & Indent Settings ---
 set expandtab           " Use spaces instead of tabs
 set smarttab            " Insert blanks according to 'shiftwidth'
