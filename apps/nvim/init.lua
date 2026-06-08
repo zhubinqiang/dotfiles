@@ -78,8 +78,10 @@ local map = vim.keymap.set
 -- Basic Operations
 map('n', '<leader>w', ':w<CR>', { desc = "Save file" })
 map('n', '<leader>q', ':q<CR>', { desc = "Quit" })
-map('n', '<leader>v', ':edit $MYVIMRC<CR>', { desc = "Edit init.lua" })
-map('n', '<leader>ev', ':vsplit $MYVIMRC<CR>', { desc = "Edit init.lua" })
+-- Configuration (Vimrc) micro-drawer
+map('n', '<leader>ve', ':edit $MYVIMRC<CR>', { desc = "Edit configuration (current window)" })
+map('n', '<leader>vv', ':vsplit $MYVIMRC<CR>', { desc = "Edit configuration (vertical split)" })
+map('n', '<leader>vs', ':source $MYVIMRC<CR>', { desc = "Source/Reload configuration" })
 map('n', '<leader>wf', ':w !sudo tee %<CR>', { desc = "Force save with sudo" })
 
 -- 保持 Neovim 剪贴板独立，通过快捷键与系统剪贴板交互
@@ -275,14 +277,15 @@ require("lazy").setup({
   --   }
   -- },
 
-  -- TOOL: Quick Commenting (Modern Lua Alternative)
-  -- Note: Swapped 'vim-commentary' for 'Comment.nvim' as it integrates better with Lua and Treesitter
-  {
-    "numToStr/Comment.nvim",
-    config = function()
-      require("Comment").setup()
-    end,
-  },
+  -- -- TOOL: Quick Commenting (Modern Lua Alternative)
+  -- -- Note: Swapped 'vim-commentary' for 'Comment.nvim' as it integrates better with Lua and Treesitter
+  -- -- Don't need this plugin since neovim >= 0.10
+  -- {
+  --   "numToStr/Comment.nvim",
+  --   config = function()
+  --     require("Comment").setup()
+  --   end,
+  -- },
 
   -- TOOL: Auto Pairs
   {
