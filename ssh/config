@@ -15,6 +15,14 @@ Host *
 #     # Point to your private key (usually not in dotfiles)
 #     IdentityFile ${HOME}/.ssh/id_ed25519
 
+#Host github.com
+#     User git
+#     # -X 5 代表使用 SOCKS5 协议
+#     ProxyCommand nc -X 5 -x 127.0.0.1:7890 %h %p
+#
+#     # -X connect 代表使用 HTTP 隧道
+#     # ProxyCommand nc -X connect -x 127.0.0.1:7897 %h %p
+
 # --- Example: Mac Mini Server ---
 # Host mini
 #     HostName 192.168.31.x
